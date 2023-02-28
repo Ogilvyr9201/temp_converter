@@ -12,6 +12,8 @@ class Converter:
         self.var_has_error = StringVar()
         self.var_has_error.set("no")
 
+        self.all_calculations = []
+
         # common format for all buttons
         # Arial size 14 bold with white text
         button_font = ("Arial", "14")
@@ -57,7 +59,7 @@ class Converter:
                                         font=button_font, width=12,
                                         bg="#990099",
                                         fg=button_fg,
-                                        command=self.to_celsius)
+                                        command=lambda: self.temp_convert(-459))
         self.to_celsius_button.grid(row=0, column=0,
                                     padx=5, pady=5)
 
@@ -66,7 +68,7 @@ class Converter:
                                            font=button_font, width=12,
                                            bg="#009900",
                                            fg=button_fg,
-                                           command=self.to_fahrenheit)
+                                           command=lambda: self.temp_convert(-273))
         self.to_fahrenheit_button.grid(row=0, column=1,
                                        padx=5, pady=5)
 
@@ -120,27 +122,42 @@ class Converter:
             self.history_export_button.config(state=NORMAL)
             return response
 
-    # check temperature is more than -459 and convert it
-    def to_celsius(self):
+    @staticmethod
+    def round_ans(val):
+        val_rounded = (2 * val + 1) // 2
+        return "{:.0f}".format(val_rounded)
 
-        to_convert = self.check_temp(-459)
+    # check temperature is valid and convert it
+    def temp_convert(self, min_val):
+        deg_sign = u'\N{DEGREE SIGN}'
+        to_convert = self.check_temp(min_val)
+        set_feedback = "yes"
+        answer = ""
+        from_to = ""
 
-        if to_convert != "invalid":
+        if to_convert == "invalid":
+            set_feedback = "no"
+
+        elif min_val == -459:
             # do calculation
-            self.var_feedback.set("Converting {} to "
-                                  "C :".format(to_convert))
+            answer = (to_convert - 32) * 5 / 9
+            from_to = "{} F{} is {} C{}"
 
-        self.output_answer()
-
-    # check temperature is more than -273 and convert it
-    def to_fahrenheit(self):
-
-        to_convert = self.check_temp(-273)
-
-        if to_convert != "invalid":
+        else:
             # do calculation
-            self.var_feedback.set("Converting {} to "
-                                  "F :".format(to_convert))
+            answer = to_convert * 1.8 + 32
+            from_to = "{} C{} is {} F{}"
+
+        if set_feedback == "yes":
+            to_convert = self.round_ans(to_convert)
+            answer = self.round_ans(answer)
+
+            # create user output and add to calculation history
+            feedback = from_to.format(to_convert, deg_sign,
+                                      answer, deg_sign)
+            self.var_feedback.set(feedback)
+
+            self.all_calculations.append(feedback)
 
         self.output_answer()
 
@@ -159,6 +176,62 @@ class Converter:
             self.temp_entry.config(bg="#FFFFFF")
 
         self.output_label.config(text=output)
+
+
+class DisplayHelp:
+
+    def __init__(self, partner):
+        # set up dialogue box and backround colour
+        background = "#ffe6cc"
+        self.help_box = Toplevel()
+
+        # disable help button
+        partner.help_info_button.config(state=DISABLED)
+
+        # if users press cross at top, closes help and
+        # 'releases' help button
+        self.help_box.protocol('WM_DELETE_WINDON',
+                               partial(self.close_help, partner))
+
+        self.help_frame = Frame(self.help_box, width=300, height=200,
+                                bg=background)
+        self.help_frame.grid()
+
+        self.help_heading = Label(self.help_frame,
+                                  text="Help / Info", bg=background,
+                                  font=("Arial", "23", "bold"))
+        self.help_heading.grid(row=0)
+
+        help_text = "To use this program, simply enter the temperature " \
+                    "you wish to convert and then choose to convert " \
+                    "either degrees Celsius (centigrade) or " \
+                    "Fahrenheit. \n\n" \
+                    " Note that -273 degrees C " \
+                    "(-459 F) is absolute zero (the coldest possible " \
+                    "temperature). If you try to convert a " \
+                    "temperature that is less than -273 degrees C, " \
+                    "you will get an error message. \n\n " \
+                    "to see your calculation history and export it to a " \
+                    "text file, please click the 'History / Export' button. "
+
+        self.help_text_label = Label(self.help_frame, bg=background,
+                                     text=help_text, wraplength=350,
+                                     justify="left")
+        self.help_text_label.grid(row=1, padx=10)
+
+        self.dismiss_button = Button(self.help_frame,
+                                     font=("Arial", "12", "bold"),
+                                     text="Dismiss", bg="#CC6600",
+                                     fg="#FFFFFF",
+                                     command=partial(self.close_help,
+                                                     partner))
+        self.dismiss_button.grid(row=2, padx=10, pady=10)
+
+    # closes help dialogue (used by button and x at top of dialogue)
+    def close_help(self, partner):
+        # Put help button back tp normal...
+        partner.help_info_button.config(state=NORMAL)
+        self.help_box.destroy()
 
 
 # main routine

@@ -1,7 +1,7 @@
 from tkinter import *
 
-class Converter:
 
+class Converter:
 
     def __init__(self):
 
@@ -25,7 +25,7 @@ class Converter:
                        "it from centigrade to Fahrenheit."
         self.temp_instructions = Label(self.temp_frame,
                                        text=instructions,
-                                       wrap=250, width=40,
+                                       wraplength=250, width=40,
                                        justify="left")
         self.temp_instructions.grid(row=1)
 
@@ -37,8 +37,8 @@ class Converter:
         error = "<error> Please enter a number."
 
         self.temp_error = Label(self.temp_frame,
-                               text="",
-                               fg="#AA0000")
+                                text="",
+                                fg="#AA0000")
 
         self.temp_error.grid(row=3)
 
@@ -46,43 +46,42 @@ class Converter:
         self.button_frame.grid(row=4)
 
         self.to_celsius_button = Button(self.button_frame,
-                                         text="To Celsius",
-                                         font=button_font, width=12,
-                                         bg="#990099",
-                                         fg=button_fg,
-                                         command=self.to_celsius)
+                                        text="To Celsius",
+                                        font=button_font, width=12,
+                                        bg="#990099",
+                                        fg=button_fg,
+                                        command=self.to_celsius)
         self.to_celsius_button.grid(row=0, column=0)
 
         self.to_fahrenheit_button = Button(self.button_frame,
-                                        text="To Fahrenheit",
-                                        font=button_font, width=12,
-                                        bg="#009900",
-                                        fg=button_fg,
-                                        )
+                                           text="To Fahrenheit",
+                                           font=button_font, width=12,
+                                           bg="#009900",
+                                           fg=button_fg,
+                                           )
         self.to_fahrenheit_button.grid(row=0, column=1,
                                        padx=5, pady=5)
 
         self.help_info_button = Button(self.button_frame,
-                                           text="Help / info",
-                                           font=button_font, width=12,
-                                           bg="#CC6600",
-                                           fg=button_fg)
+                                       text="Help / info",
+                                       font=button_font, width=12,
+                                       bg="#CC6600",
+                                       fg=button_fg)
         self.help_info_button.grid(row=1, column=0,
-                                       padx=5, pady=5)
+                                   padx=5, pady=5)
 
         self.history_export_button = Button(self.button_frame,
-                                       text="History / Export",
-                                       font=button_font, width=12,
-                                       bg="#004C99",
-                                       fg=button_fg,
-                                       state=DISABLED)
+                                            text="History / Export",
+                                            font=button_font, width=12,
+                                            bg="#004C99",
+                                            fg=button_fg,
+                                            state=DISABLED)
         self.history_export_button.grid(row=1, column=1,
-                                   padx=5, pady=5)
+                                        padx=5, pady=5)
 
     def check_temp(self, min_value):
         has_error = "no"
         error = "Please enter a number that is more then {}".format(min_value)
-
 
         # check that user has entered a valid number...
         try:
@@ -106,13 +105,10 @@ class Converter:
             self.history_export_button.config(state=NORMAL)
             return response
 
-
     # check temperature is more then -459 adn convert it
     def to_celsius(self):
 
         self.check_temp(-459)
-
-
 
 
 # main routine
@@ -122,4 +118,3 @@ if __name__ == "__main__":
     root.title("Temperature Converter")
     Converter()
     root.mainloop()
-
