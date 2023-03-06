@@ -1,0 +1,11 @@
+**** Temperature Calculations ****
+
+Generated: 2023_03_07
+
+Your Calculation History:
+
+45 °C is 113 °F
+45 °F is 7 °C
+12 °C is 54 °F
+12 °F is -11 °C
+
